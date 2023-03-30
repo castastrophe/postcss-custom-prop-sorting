@@ -1,0 +1,59 @@
+{
+  "private": false,
+  "name": "postcss-custom-prop-sorting",
+  "version": "1.0.0",
+  "description": "Adds custom properties to the start of a declaration block and sorts them.",
+  "license": "Apache-2.0",
+  "author": "Cassondra Roberts <castastrophe@users.noreply.github.com> (https://allons-y.llc)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/castastrophe/postcss-custom-prop-sorting.git"
+  },
+  "bugs": {
+    "url": "https://github.com/castastrophe/postcss-custom-prop-sorting/issues"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "test": "ava"
+  },
+  "peerDependencies": {
+    "postcss": "^7.0.0 || ^8.0.0"
+  },
+  "devDependencies": {
+    "ava": "^5.2.0",
+    "lint-staged": "^13.2.0",
+    "postcss": "^8.4.21",
+    "prettier": "^2.8.7",
+    "prettier-package-json": "^2.8.0"
+  },
+  "keywords": [
+    "css",
+    "custom properties",
+    "sorting",
+    "plugin",
+    "postcss"
+  ],
+  "funding": [
+    {
+      "type": "github",
+      "url": " https://github.com/sponsors/castastrophe"
+    }
+  ],
+  "engines": {
+    "node": ">=14 <=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write"
+    ],
+    "package.json": [
+      "prettier-package-json --write"
+    ]
+  }
+}

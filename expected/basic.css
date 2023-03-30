@@ -1,0 +1,7 @@
+.lightest {
+  --a: #fff;
+  --b: rgba(255, 255, 255, 0.8);
+  --c: 10px;
+  --d: block;
+  --e: var(--a);
+}
