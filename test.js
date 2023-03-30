@@ -36,3 +36,14 @@ function readFile(filename) {
 test('create basic output', t => {
   return compare(t, 'basic.css', 'basic.css');
 });
+
+test('create a custom sort output', t => {
+  return compare(t, 'basic.css', 'custom-sort.css', {
+    sortOrder: ([,aDecl], [,bDecl]) => {
+      /* Sort by value. */
+      const aValue = aDecl.value;
+      const bValue = bDecl.value;
+      return (aValue > bValue ? 1 : -1);
+    },
+  });
+});

@@ -33,6 +33,7 @@ module.exports = (options) => {
     return {
         postcssPlugin: 'postcss-custom-prop-sorting',
         prepare() {
+            // const validatedOptions = validateOptions(opts);
             return {
                 /** @type {import('postcss').RuleProcessor} */
                 Rule(rule) {
@@ -66,7 +67,7 @@ module.exports = (options) => {
 
                     /* Iterate over the custom properties in the map and append them to the rule. */
                     let propArray = Array.from(customProps);
-                    if (typeof sortOrder === 'function') propArray = propArray.sort(sortOrder);
+                    if (typeof sortOrder === 'function') propArray.sort(sortOrder);
 
                     propArray.reverse().forEach(([, decl]) => rule.prepend(decl));
                 },
