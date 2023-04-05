@@ -1,5 +1,5 @@
 {
-  "private": false,
+  "private": "false",
   "name": "postcss-custom-prop-sorting",
   "version": "1.1.0",
   "description": "Adds custom properties to the start of a declaration block and sorts them.",
@@ -17,17 +17,30 @@
     "index.js"
   ],
   "scripts": {
-    "test": "ava"
+    "prepare": "husky install",
+    "test": "ava",
+    "coverage": "c8 yarn test",
+    "semantic-release": "semantic-release"
   },
   "peerDependencies": {
     "postcss": "^7.0.0 || ^8.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.5.1",
+    "@commitlint/config-conventional": "^17.4.4",
+    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^8.0.7",
+    "@semantic-release/npm": "^10.0.2",
+    "@semantic-release/release-notes-generator": "^10.0.3",
     "ava": "^5.2.0",
+    "c8": "^7.13.0",
+    "husky": "^8.0.3",
     "lint-staged": "^13.2.0",
     "postcss": "^8.4.21",
     "prettier": "^2.8.7",
-    "prettier-package-json": "^2.8.0"
+    "prettier-package-json": "^2.8.0",
+    "semantic-release": "^21.0.1"
   },
   "keywords": [
     "css",
@@ -46,7 +59,8 @@
     "node": ">=14 <=18"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "lint-staged": {
     "*.js": [

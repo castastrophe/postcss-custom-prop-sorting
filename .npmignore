@@ -1,3 +1,9 @@
 /node_modules
 npm-debug.log
-/.github
+.github
+.husky
+.*
+coverage
+expected
+fixtures
+test.js
