@@ -7,10 +7,13 @@
 
 ```sh
 yarn add -D postcss-custom-prop-sorting
-postcss -u postcss-custom-prop-sorting -o dist/index.css src/index.css
 ```
 
 ## Usage
+
+```sh
+postcss -u postcss-custom-prop-sorting -o dist/index.css src/index.css
+```
 
 This plugin turns this:
 
@@ -35,8 +38,6 @@ Into this:
   --e: var(--a);
 }
 ```
-
-## Using this plugin
 
 You can optionally provide your own custom sorting logic that is keyed on either the property name or any value available in the Declaration object.  The example below shows an alphabetizing logic based on the values.
 
@@ -68,3 +69,12 @@ Running this against the same input above, we would now get:
 You could use this to sort custom properties for example by type, parsing values by leveraging the [postcss-value-parser](https://github.com/TrySound/postcss-value-parser).
 
 or implement a manual logic similar to how the [css-declaration-sorter](https://github.com/Siilwyn/css-declaration-sorter/blob/master/orders/smacss.mjs) project does and define your logic manually.
+
+## Options
+
+### `sortOrder`
+
+Type: `([string, Declaration], [string, Declaration]) => Number`<br>
+Default: `([a,], [b,]) => (a > b ? 1 : -1),`
+
+A function to be passed to the array sort method.  It is passed two arrays, each containing the property name (including the `--` prefix) and the corresponding Declaration object.  The function should return a number, where a negative number indicates that the first item should be sorted before the second item, a positive number indicates that the second item should be sorted before the first item, and zero indicates that the items are equal.

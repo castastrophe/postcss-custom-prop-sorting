@@ -36,11 +36,11 @@ module.exports = (options) => {
             // const validatedOptions = validateOptions(opts);
             return {
                 /** @type {import('postcss').RuleProcessor} */
-                Rule(rule) {
-                    /* If the rule is not a root rule then return without processing. */
+                Rule(rule, { result }) {
+                    /** If the rule is not a root rule then return without processing. */
                     if (!rule.parent || rule.parent.type !== 'root') return;
 
-                    /* Create a map to store the custom properties. */
+                    /** Create a map to store the custom properties. */
                     /** @type Map<import('postcss').Declaration["prop"], import('postcss').Declaration> */
                     const customProps = new Map();
 
@@ -48,26 +48,30 @@ module.exports = (options) => {
                     rule.walkDecls(decl => {
                         const { prop } = decl;
 
-                        /* If the property is not a custom property then return without processing. */
+                        /** If the property is not a custom property then return without processing. */
                         if (!prop.startsWith('--')) return;
 
+                        /** If the property is already in the map throw a warning. */
                         if (customProps.has(prop)) {
-                            /* If the property is already in the map throw a warning. */
                             decl.warn(rule, `Duplicate custom property found: ${prop}.`);
                         }
 
-                        /*
+                        /**
                          * Add the property to the map; note that duplicates replace the existing
                          *  item b/c we want to retain the last declaration of the property.
                          **/
                         customProps.set(prop, decl);
-                        /* Remove properties so that we can append them in the correct order. */
+                        /** Remove properties so that we can append them in the correct order. */
                         decl.remove();
                     });
 
-                    /* Iterate over the custom properties in the map and append them to the rule. */
-                    let propArray = Array.from(customProps);
+                    /** Iterate over the custom properties in the map and append them to the rule. */
+                    const propArray = [...customProps.entries()];
                     if (typeof sortOrder === 'function') propArray.sort(sortOrder);
+                    else {
+                        rule.warn(result, 'The sort order input must be provided as a function. Used default sorting method instead.', { word: 'sortOrder' });
+                        propArray.sort();
+                    }
 
                     propArray.reverse().forEach(([, decl]) => rule.prepend(decl));
                 },
