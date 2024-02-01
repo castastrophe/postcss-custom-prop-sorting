@@ -36,7 +36,7 @@
     "c8": "^8.0.1",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
-    "postcss": "^8.4.31",
+    "postcss": "^8.4.33",
     "prettier": "^2.8.7",
     "prettier-package-json": "^2.8.0",
     "semantic-release": "^21.0.7"
