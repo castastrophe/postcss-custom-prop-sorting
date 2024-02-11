@@ -16,10 +16,11 @@
     "index.js"
   ],
   "scripts": {
-    "prepare": "husky install",
-    "test": "ava",
     "coverage": "c8 yarn test",
-    "semantic-release": "semantic-release"
+    "prepare": "husky install",
+    "prepublishOnly": "yarn test",
+    "semantic-release": "semantic-release",
+    "test": "ava"
   },
   "peerDependencies": {
     "postcss": "^7.0.0 || ^8.0.0"
@@ -39,7 +40,7 @@
     "postcss": "^8.4.31",
     "prettier": "^2.8.7",
     "prettier-package-json": "^2.8.0",
-    "semantic-release": "^21.0.7"
+    "semantic-release": "^23.0.2"
   },
   "keywords": [
     "css",
@@ -55,7 +56,7 @@
     }
   ],
   "engines": {
-    "node": ">=14 <=18"
+    "node": ">=20"
   },
   "publishConfig": {
     "access": "public",
