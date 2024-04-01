@@ -40,7 +40,7 @@
     "postcss": "^8.4.35",
     "prettier": "^2.8.7",
     "prettier-package-json": "^2.8.0",
-    "semantic-release": "^23.0.2"
+    "semantic-release": "^23.0.6"
   },
   "keywords": [
     "css",
