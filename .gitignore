@@ -1,5 +1,25 @@
-/node_modules
+**/node_modules/**
+
+# Logs
 npm-debug.log
+yarn-error.log
+npm-debug.log*
+
+# System files
 .DS_Store
+
+# Test files
 coverage/
+
+# IDE files
 .env
+.tmp
+
+# yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
