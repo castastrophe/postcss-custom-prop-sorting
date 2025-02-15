@@ -1,11 +1,13 @@
 .lightest {
   text-transform: capitalize;
-  --e: var(--a);
+  --a: var(--e);
   color: var(--e);
-  --b: rgba(255, 255, 255, 0.8);
+  --b3: rgba(255, 255, 255, 0.8);
+  --b10: rgba(255, 255, 255, 0.3);
+  --b200: rgba(255, 255, 255, 0.5);
   --d: block;
   display: var(--d);
-  --a: #fff;
+  --e: #fff;
   --c: 10px;
   font-size: var(--c, 18px);
 }

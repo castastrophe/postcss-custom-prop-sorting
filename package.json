@@ -1,6 +1,6 @@
 {
   "name": "postcss-custom-prop-sorting",
-  "version": "1.2.0",
+  "version": "2.1.0",
   "description": "Adds custom properties to the start of a declaration block and sorts them.",
   "license": "Apache-2.0",
   "author": "Cassondra Roberts <castastrophe@users.noreply.github.com> (https://allons-y.llc)",
@@ -39,6 +39,7 @@
     "c8": "^10.1.3",
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
+    "pinst": "^3.0.0",
     "postcss": "^8.5.2",
     "prettier": "^3.5.1",
     "prettier-package-json": "^2.8.0",

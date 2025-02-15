@@ -4809,6 +4809,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pinst@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "pinst@npm:3.0.0"
+  bin:
+    pinst: bin.js
+  checksum: 10c0/abb1ed62ea2acb2207a7a860715bdb26ecbde74ede8fad5f6200194f3e22db25e2b7a49af05e5cc7fc05384709c651e0000323f0077d7239060c4b68c8acd428
+  languageName: node
+  linkType: hard
+
 "pkg-conf@npm:^2.1.0":
   version: 2.1.0
   resolution: "pkg-conf@npm:2.1.0"
@@ -4843,6 +4852,7 @@ __metadata:
     c8: "npm:^10.1.3"
     husky: "npm:^9.1.7"
     lint-staged: "npm:^15.4.3"
+    pinst: "npm:^3.0.0"
     postcss: "npm:^8.5.2"
     prettier: "npm:^3.5.1"
     prettier-package-json: "npm:^2.8.0"
