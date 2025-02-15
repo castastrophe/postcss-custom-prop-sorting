@@ -1,7 +1,7 @@
 # postcss-custom-prop-sorting
 >
 > Bring together all custom properties at the top of a set of rules and sort them by a provided
-> sorting function (defaults to alphabetical).
+> sorting function (defaults to alphanumeric).
 
 ## Installation
 
@@ -19,11 +19,17 @@ This plugin turns this:
 
 ```css
 .lightest {
-  --e: var(--a);
-  --b: rgba(255, 255, 255, 0.8);
+  text-transform: capitalize;
+  --a: var(--e);
+  color: var(--e);
+  --b3: rgba(255, 255, 255, 0.8);
+  --b10: rgba(255, 255, 255, 0.3);
+  --b200: rgba(255, 255, 255, 0.5);
   --d: block;
-  --a: #fff;
+  display: var(--d);
+  --e: #fff;
   --c: 10px;
+  font-size: var(--c, 18px);
 }
 ```
 
@@ -31,11 +37,18 @@ Into this:
 
 ```css
 .lightest {
-  --a: #fff;
-  --b: rgba(255, 255, 255, 0.8);
+  --b3: rgba(255, 255, 255, 0.8);
+  --b10: rgba(255, 255, 255, 0.3);
+  --b200: rgba(255, 255, 255, 0.5);
   --c: 10px;
   --d: block;
-  --e: var(--a);
+  --e: #fff;
+  --a: var(--e);
+
+  text-transform: capitalize;
+  color: var(--e);
+  display: var(--d);
+  font-size: var(--c, 18px);
 }
 ```
 
@@ -58,11 +71,18 @@ Running this against the same input above, we would now get:
 
 ```css
 .lightest {
-  --a: #fff;
+  --e: #fff;
   --c: 10px;
   --d: block;
-  --b: rgba(255, 255, 255, 0.8);
-  --e: var(--a);
+  --b10: rgba(255, 255, 255, 0.3);
+  --b200: rgba(255, 255, 255, 0.5);
+  --b3: rgba(255, 255, 255, 0.8);
+  --a: var(--e);
+
+  text-transform: capitalize;
+  color: var(--e);
+  display: var(--d);
+  font-size: var(--c, 18px);
 }
 ```
 
@@ -70,11 +90,13 @@ You could use this to sort custom properties for example by type, parsing values
 
 or implement a manual logic similar to how the [css-declaration-sorter](https://github.com/Siilwyn/css-declaration-sorter/blob/master/orders/smacss.mjs) project does and define your logic manually.
 
+Important note, if custom properties have internal dependencies to other custom properties in the same rule, those dependencies will not be sorted, rather, they will be injected at the end of the list so as not to alter their resolutions.
+
 ## Options
 
 ### `sortOrder`
 
 Type: `([string, Declaration], [string, Declaration]) => Number`<br>
-Default: `([a,], [b,]) => (a > b ? 1 : -1),`
+Default: `([a], [b]) => a.localeCompare(b, undefined, { numeric: true }),`
 
-A function to be passed to the array sort method.  It is passed two arrays, each containing the property name (including the `--` prefix) and the corresponding Declaration object.  The function should return a number, where a negative number indicates that the first item should be sorted before the second item, a positive number indicates that the second item should be sorted before the first item, and zero indicates that the items are equal.
+A custom function can be passed to the array sort method.  That function will receive two arrays, each containing the property name (including the `--` prefix) and the corresponding Declaration object.  The function should return a number, where a negative number indicates that the first item should be sorted before the second, a positive number indicates that the second item should be sorted before the first, and zero indicates that the items are equal.

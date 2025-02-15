@@ -22,10 +22,9 @@ function compare(t, fixtureFilePath, expectedFilePath, options = {}){
       { from: fixtureFilePath }
     )
     .then(result => {
-      const actual = result.css;
       const expected = readFile(`./expected/${expectedFilePath}`);
-      t.is(actual, expected);
-      t.is(result.warnings().length, 0);
+      t.is(result.css, expected);
+      return result;
     });
 }
 
@@ -34,16 +33,26 @@ function readFile(filename) {
 }
 
 test('create basic output', t => {
-  return compare(t, 'basic.css', 'basic.css');
+  return compare(t, 'basic.css', 'basic.css').then((result) => {
+    t.is(result.warnings().length, 0);
+  });
 });
 
 test('create a custom sort output', t => {
   return compare(t, 'basic.css', 'custom-sort.css', {
     sortOrder: ([,aDecl], [,bDecl]) => {
-      /* Sort by value. */
-      const aValue = aDecl.value;
-      const bValue = bDecl.value;
-      return (aValue > bValue ? 1 : -1);
+      /* Sort alphabetical by value. */
+      return (aDecl.value > bDecl.value ? 1 : -1);
     },
+  }).then((result) => {
+    t.is(result.warnings().length, 0);
+  });
+});
+
+test('warn if the sortOrder provided is not a function', t => {
+  return compare(t, 'basic.css', 'basic.css', {
+    sortOrder: 'alphabetical',
+  }).then((result) => {
+    t.is(result.warnings().length, 1);
   });
 });
