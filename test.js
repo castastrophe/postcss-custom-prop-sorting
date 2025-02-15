@@ -38,6 +38,12 @@ test('create basic output', t => {
   });
 });
 
+test('validate a complex output', t => {
+  return compare(t, 'complex.css', 'complex.css').then((result) => {
+    t.is(result.warnings().length, 0);
+  });
+});
+
 test('create a custom sort output', t => {
   return compare(t, 'basic.css', 'custom-sort.css', {
     sortOrder: ([,aDecl], [,bDecl]) => {
