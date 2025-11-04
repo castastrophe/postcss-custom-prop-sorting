@@ -17,10 +17,10 @@
   ],
   "scripts": {
     "coverage": "c8 yarn test",
-    "prepack": "pinst --disable",
-    "prepare": "husky",
     "postinstall": "husky || true",
+    "prepack": "pinst --disable",
     "postpack": "pinst --enable",
+    "prepare": "husky",
     "semantic-release": "semantic-release",
     "test": "ava"
   },
@@ -48,23 +48,27 @@
   "keywords": [
     "css",
     "custom properties",
-    "sorting",
     "plugin",
-    "postcss"
-  ],
-  "funding": [
-    {
-      "type": "github",
-      "url": " https://github.com/sponsors/castastrophe"
-    }
+    "postcss",
+    "sorting"
   ],
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "funding": [
+    {
+      "type": "github",
+      "url": " https://github.com/sponsors/castastrophe"
+    },
+    {
+      "type": "buymeacoffee",
+      "url": "https://www.buymeacoffee.com/castastrophe"
+    }
+  ],
   "lint-staged": {
     "*.js": [
       "prettier --write"
@@ -73,5 +77,5 @@
       "prettier-package-json --write"
     ]
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.10.3"
 }

@@ -11,13 +11,19 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v5
+
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node LTS version
         uses: actions/setup-node@v6
         with:
           cache: yarn
-          node-version: 20
+          node-version: 22
+
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
+
       - name: Run test suite
         run: yarn test
 
@@ -27,12 +33,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+
+      - name: Enable Corepack
+        run: corepack enable
+
       - uses: actions/setup-node@v6
         with:
           cache: yarn
-          node-version: 20
+          node-version: 22
+
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
+
       - name: Run coverage report
         run: yarn coverage
       - uses: actions/upload-artifact@v5
@@ -44,8 +56,8 @@ jobs:
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
           filename: coverage/cobertura-coverage.xml
-          format: 'markdown'
-          output: 'both'
+          format: "markdown"
+          output: "both"
       - name: Add coverage PR comment
         uses: marocchino/sticky-pull-request-comment@v2.9.4
         with:
