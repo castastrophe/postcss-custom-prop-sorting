@@ -1,5 +1,5 @@
 # postcss-custom-prop-sorting
->
+
 > Bring together all custom properties at the top of a set of rules and sort them by a provided
 > sorting function (defaults to alphanumeric).
 
@@ -52,19 +52,20 @@ Into this:
 }
 ```
 
-You can optionally provide your own custom sorting logic that is keyed on either the property name or any value available in the Declaration object.  The example below shows an alphabetizing logic based on the values.
+You can optionally provide your own custom sorting logic that is keyed on either the property name or any value available in the Declaration object. The example below shows an alphabetizing logic based on the values.
 
 ```js
-  postcss.process([
-    require("postcss-custom-prop-sorting")({
-      sortOrder: ([aProp, aDecl], [bProp, bDecl]) => {
-        /* Sort by value. */
-        const aValue = aDecl.value;
-        const bValue = bDecl.value;
-        return (aValue > bValue ? 1 : -1);
-      },
-    })
-  ])
+import postcss from "postcss";
+import customPropSorting from "postcss-custom-prop-sorting";
+
+const result = await postcss([
+  customPropSorting({
+    sortOrder: ([aProp, aDecl], [bProp, bDecl]) => {
+      /* Sort by value. */
+      return aDecl.value > bDecl.value ? 1 : -1;
+    },
+  }),
+]).process(inputCss, { from: "input.css" });
 ```
 
 Running this against the same input above, we would now get:
@@ -90,7 +91,11 @@ You could use this to sort custom properties for example by type, parsing values
 
 or implement a manual logic similar to how the [css-declaration-sorter](https://github.com/Siilwyn/css-declaration-sorter/blob/master/orders/smacss.mjs) project does and define your logic manually.
 
-Important note, if custom properties have internal dependencies to other custom properties in the same rule, those dependencies will not be sorted, rather, they will be injected at the end of the list so as not to alter their resolutions.
+### Dependency handling
+
+Any custom property whose value references another custom property in the same rule (via `var(--other)`, including nested fallbacks like `var(--x, var(--y))`) is a **dependent**. Dependents are set aside from the primary sort and appended after every independent property, then topologically ordered among themselves so that each one still follows all of its in-rule dependencies. Ties within the dependents section are broken using the sort function (default: natural alphanumeric).
+
+If a genuine cycle is detected (e.g. `--a: var(--b); --b: var(--a);`), the plugin emits a PostCSS warning and appends the remaining dependents in sort order rather than looping forever.
 
 ## Options
 
@@ -99,11 +104,11 @@ Important note, if custom properties have internal dependencies to other custom 
 Type: `([string, Declaration], [string, Declaration]) => Number`<br>
 Default: `([a], [b]) => a.localeCompare(b, undefined, { numeric: true }),`
 
-A custom function can be passed to the array sort method.  That function will receive two arrays, each containing the property name (including the `--` prefix) and the corresponding Declaration object.  The function should return a number, where a negative number indicates that the first item should be sorted before the second, a positive number indicates that the second item should be sorted before the first, and zero indicates that the items are equal.
+A custom function can be passed to the array sort method. That function will receive two arrays, each containing the property name (including the `--` prefix) and the corresponding Declaration object. The function should return a number, where a negative number indicates that the first item should be sorted before the second, a positive number indicates that the second item should be sorted before the first, and zero indicates that the items are equal.
 
 ## Contributing
 
-Contributions are welcome! Please open an [issue](https://github.com/castastrophe/glob-concat-cli/issues/new) or submit a pull request.
+Contributions are welcome! Please open an [issue](https://github.com/castastrophe/postcss-custom-prop-sorting/issues/new) or submit a pull request.
 
 ## License
 

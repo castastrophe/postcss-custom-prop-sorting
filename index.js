@@ -17,7 +17,7 @@
 
 /**
  * @typedef {object} Options
- * @property {(a: PropSet, b: PropSet) => PropSet[]} [sortOrder]
+ * @property {(a: PropSet, b: PropSet) => number} [sortOrder]
  **/
 
 const messages = {
@@ -30,7 +30,7 @@ const messages = {
  * @param {Options} options
  * @returns {import('postcss').Plugin}
  */
-module.exports = ({
+const plugin = ({
   /* Defaults to sorting alphabetically. */
   sortOrder,
 } = {}) => {
@@ -59,7 +59,7 @@ module.exports = ({
         /* If the property is already in the map throw a warning. */
         if (customProps.has(prop)) {
           decl.warn(
-            rule,
+            result,
             `Duplicate custom property found: ${prop}. Only the last declaration will be kept.`,
             { word: prop },
           );
@@ -68,22 +68,14 @@ module.exports = ({
           customProps.delete(prop);
         }
 
-        /* Check if the value of the custom property contains other custom properties. */
-        const customPropRegex = /var\((--[^)]+)\)/g;
-        // Create an array of custom properties in the value
-        const customPropsInValue = decl.value.matchAll(customPropRegex);
-
-        // If there are custom properties in the value, add them to the dependencies map
-        if (customPropsInValue) {
-          [...customPropsInValue].forEach(([, customPropName]) => {
-            // If the custom property is not already in the map, add it
-            if (!dependencies.has(customPropName)) {
-              dependencies.set(customPropName, new Set());
-            }
-
-            // Add the property to the custom property's dependencies
-            dependencies.get(customPropName).add(prop);
-          });
+        // Extract every custom property referenced inside var() in the value.
+        // Handles whitespace (`var( --foo )`) and nested fallback deps
+        // (`var(--x, var(--y))` yields both --x and --y).
+        for (const [, depName] of decl.value.matchAll(
+          /var\(\s*(--[^\s,)]+)/g,
+        )) {
+          if (!dependencies.has(depName)) dependencies.set(depName, new Set());
+          dependencies.get(depName).add(prop);
         }
 
         /**
@@ -110,90 +102,84 @@ module.exports = ({
         sortedArray.sort(alphaNumericSort);
       }
 
-      // Check if there are any internal dependencies between custom properties
-      // that require a specific order
-      /** @type Map<import('postcss').Declaration["prop"], PropSet[]> */
-      const dependentProps = new Map();
-      sortedArray.forEach(([prop]) => {
-        if (!dependencies.has(prop)) return;
-
-        dependencies.get(prop).forEach((dependency) => {
-          // Find the index of the dependency in the propArray
-          const dependencyIndex = sortedArray.findIndex(
-            ([prop]) => prop === dependency,
-          );
-
-          // If the dependency is found, insert the property after it
-          if (dependencyIndex === -1) return;
-
-          // Check if the dependency is already in the correct order
-          if (dependencyIndex < sortedArray.findIndex(([p]) => p === prop))
-            return;
-
-          // Remove the dependent property from the array
-          const set = sortedArray.splice(dependencyIndex, 1)?.[0];
-
-          // dependentProps.set(depProp, { dep, after: prop });
-          dependentProps.set(
-            prop,
-            [...(dependentProps.get(prop) ?? []), set].sort(alphaNumericSort),
-          );
-        });
-      });
-
-      const limit = 100;
-      let count = 0;
-      // While there are dependent properties, add them to the sorted array
-      while (dependentProps.size > 0) {
-        count++;
-        if (count > limit) {
-          console.log(
-            "Dependent properties not resolved after",
-            limit,
-            "iterations:",
-            dependentProps.size,
-          );
-
-          // Inject the remaining properties to the end of the sorted array
-          [...dependentProps.entries()].forEach(([, set]) => {
-            sortedArray.push(set);
-          });
-          break;
-        }
-
-        // Add the dependent properties back to the sorted array
-        for (const [lookupKey, set] of dependentProps.entries()) {
-          // If property is undefined, leave it to try again later
-          if (sortedArray.findIndex(([p]) => p === lookupKey) === -1) continue;
-
-          // Insert dependent properties after the property in the sorted array
-          set.forEach((depSet) => {
-            const keyIdx = sortedArray.findIndex(([p]) => p === lookupKey);
-            // Insert the dependent property after the property in the sorted array
-            // but as close to the sorted position as possible
-            sortedArray.splice(keyIdx + 1, 0, depSet);
-          });
-
-          // Remove the dependent property from the dependentProps map
-          dependentProps.delete(lookupKey);
+      // Invert the dependency map: dependent -> Set of its dependencies that
+      // are actually present in this rule (out-of-rule deps don't constrain
+      // ordering inside this rule).
+      const propNames = new Set(sortedArray.map(([p]) => p));
+      /** @type Map<import('postcss').Declaration["prop"], Set<import('postcss').Declaration["prop"]>> */
+      const dependenciesOf = new Map();
+      for (const [dep, dependents] of dependencies) {
+        if (!propNames.has(dep)) continue;
+        for (const dependent of dependents) {
+          if (!propNames.has(dependent)) continue;
+          if (!dependenciesOf.has(dependent))
+            dependenciesOf.set(dependent, new Set());
+          dependenciesOf.get(dependent).add(dep);
         }
       }
 
+      // Partition: independents keep their sorted position; dependents get
+      // topologically ordered at the end so each dependent follows all its
+      // in-rule dependencies. Ties within the dependents partition break by
+      // the user-provided sort (already applied to sortedArray).
+      const independents = sortedArray.filter(([p]) => !dependenciesOf.has(p));
+      const dependentsPending = sortedArray.filter(([p]) =>
+        dependenciesOf.has(p),
+      );
+
+      /** @type PropSet[] */
+      const dependentsOrdered = [];
+      const placed = new Set(independents.map(([p]) => p));
+
+      while (dependentsPending.length > 0) {
+        const idx = dependentsPending.findIndex(([p]) =>
+          [...dependenciesOf.get(p)].every((d) => placed.has(d)),
+        );
+        if (idx === -1) {
+          // Every remaining dependent still has an unresolved dep in this set
+          // — that means a cycle. Append the rest in their current sort order.
+          rule.warn(
+            result,
+            `Circular custom-property dependency detected; appending ${dependentsPending.length} remaining custom propert${dependentsPending.length === 1 ? "y" : "ies"} in sort order.`,
+          );
+          dependentsOrdered.push(...dependentsPending);
+          dependentsPending.length = 0;
+          break;
+        }
+        const [entry] = dependentsPending.splice(idx, 1);
+        dependentsOrdered.push(entry);
+        placed.add(entry[0]);
+      }
+
+      sortedArray.length = 0;
+      sortedArray.push(...independents, ...dependentsOrdered);
+
+      // Snapshot whether the rule has any non-custom-property nodes remaining.
+      // (walkDecls above removed every custom prop, so rule.nodes now holds
+      // only the "other" declarations.) If it does, insert a blank line
+      // between the last custom prop and the first other decl.
+      const ruleHasOtherDecls = rule.nodes.length > 0;
+
       sortedArray.reverse().forEach(([, decl], idx) => {
-        // Add a newline between the last custom property and the first non-custom property (if any)
-        if (idx === 0 && rule.nodes.length > 0) {
-          decl.raws.after += "\n";
+        const isLastCustomProp = idx === 0;
+
+        if (isLastCustomProp && ruleHasOtherDecls) {
+          decl.raws.after = (decl.raws.after ?? "") + "\n";
         }
 
         rule.prepend(decl);
 
-        if (idx === 0 && rule.nodes.length > 0) {
-          const was = decl.next().raws.before;
-          decl.next().raws.before = `\n${was}`;
+        if (isLastCustomProp && ruleHasOtherDecls) {
+          const next = decl.next();
+          if (next) {
+            next.raws.before = `\n${next.raws.before ?? ""}`;
+          }
         }
       });
     },
   };
 };
 
-module.postcss = true;
+plugin.postcss = true;
+
+export default plugin;

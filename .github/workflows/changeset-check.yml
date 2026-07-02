@@ -1,0 +1,34 @@
+name: Changeset Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# Renovate PRs bump dependencies and don't need a user-facing changelog entry.
+# Exempt them at the workflow level so no status check is even queued.
+jobs:
+  changeset:
+    if: ${{ !startsWith(github.head_ref, 'renovate/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Verify a changeset is present
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: yarn changeset status --since="origin/$BASE_REF"
