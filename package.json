@@ -26,7 +26,9 @@
   "scripts": {
     "changeset": "changeset",
     "coverage": "c8 yarn test",
+    "format": "prettier-package-json --write && prettier --write \"**/*.{js,json,md,yml}\"",
     "postinstall": "husky || true",
+    "lint": "prettier --check \"**/*.{js,json,md,yml}\"",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
     "prepare": "husky",
