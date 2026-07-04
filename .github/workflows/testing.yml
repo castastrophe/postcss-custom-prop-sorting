@@ -6,7 +6,7 @@ on:
 
 jobs:
   lint:
-    name: Prettier check
+    name: Linting check
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -19,13 +19,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           cache: yarn
-          node-version: 22
+          node-version: 24
 
       - name: Install dependencies
         run: yarn install --immutable
 
       - name: Check formatting
-        run: yarn prettier --check "**/*.{js,json,md,yml}"
+        run: yarn lint-staged
 
   test:
     # Full test suite. Ava 8 requires Node ^22.20 || ^24.12 || >=26, so we
