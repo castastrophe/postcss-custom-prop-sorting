@@ -27,6 +27,8 @@
     "changeset": "changeset",
     "coverage": "c8 yarn test",
     "postinstall": "husky || true",
+    "prepack": "pinst --disable",
+    "postpack": "pinst --enable",
     "prepare": "husky",
     "release": "changeset publish",
     "test": "ava"
@@ -42,6 +44,7 @@
     "c8": "^11.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.0",
+    "pinst": "^3.0.0",
     "postcss": "^8.5.6",
     "prettier": "^3.7.4",
     "prettier-package-json": "^2.8.0"
