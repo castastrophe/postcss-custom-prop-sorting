@@ -2,17 +2,17 @@
 "postcss-custom-prop-sorting": major
 ---
 
-Restore the package to a green test suite and modernize it for production release.
+Built for design-token stylesheets: dependency-aware sorting for CSS custom properties — including nested var() fallback chains — with TypeScript types and Node 18+ / PostCSS 8 support.
 
 ### Breaking changes
 
-- **The package is now ESM-only.** `"type": "module"` is set in `package.json`, `module.exports` has been replaced with `export default`, and `exports` conditions are declared. CJS consumers doing `const plugin = require("postcss-custom-prop-sorting")` must switch to `import plugin from "postcss-custom-prop-sorting"` (or dynamic `await import(...)` from a CJS file).
-- **Dropped PostCSS 7 peer support.** `peerDependencies.postcss` is now `^8.4.0`. PostCSS 7 has been EOL since 2022; upgrade to PostCSS 8.
+- **Full ESM migration.** `"type": "module"` is set in `package.json`, `module.exports` has been replaced with `export default`, and `exports` conditions are declared. CJS consumers doing `const plugin = require("postcss-custom-prop-sorting")` must switch to `import plugin from "postcss-custom-prop-sorting"` (or dynamic `await import(...)` from a CJS file).
+- **Dropped PostCSS 7 peer support.** `peerDependencies.postcss` is now `^8.4.0`. PostCSS 7 has been EOL since 2022; [PostCSS 8 migration guide](https://evilmartians.com/chronicles/postcss-8-plugin-migration).
 - **Widened supported Node range.** `engines.node` is now `>=18` (down from `>=24`). This is a compatibility _widening_ for consumers, but if you were relying on Node 24-only syntax in a downstream extension, be aware the plugin now runs on Node 18 too.
 
 ### Fixed
 
-- **Custom-property dependency reordering was inverted.** Previously, a property whose value referenced another (`--a: var(--e)`) was left ahead of its dependency instead of being moved after it. Fixed and validated by real byte-for-byte fixture assertions (previously the tests only counted warnings).
+- **Custom-property dependency reordering was inverted.** Previously, a property whose value referenced another (`--a: var(--e)`) was left ahead of its dependency instead of being moved after it. Fixed and validated by real byte-for-byte fixture assertions (previously the tests counted warnings).
 - **Multi-dependency support.** A dependent with more than one in-rule dependency (`--c: var(--x, var(--y))`) now correctly follows _all_ of its dependencies. The prior single-pass "splice + queue" approach silently lost the second constraint.
 - **Circular dependencies no longer hit a 100-iteration `console.log` fallback.** Cycles are now detected explicitly and emit a proper PostCSS warning; the remaining dependents are appended in sort order rather than looping.
 - **`var()` regex modernized.** Now handles whitespace (`var( --foo )`) and nested fallback dependencies (`var(--x, var(--y))` records deps on both `--x` and `--y`).
