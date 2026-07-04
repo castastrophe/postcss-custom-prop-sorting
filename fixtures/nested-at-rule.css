@@ -1,0 +1,13 @@
+.card {
+  --z: 1;
+  color: blue;
+  --a: var(--z);
+}
+
+@media (min-width: 800px) {
+  .card {
+    --b: green;
+    --a: yellow;
+    color: purple;
+  }
+}

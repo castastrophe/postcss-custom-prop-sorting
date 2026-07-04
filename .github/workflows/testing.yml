@@ -5,9 +5,9 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  test:
+  lint:
+    name: Linting check
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out code
         uses: actions/checkout@v7
@@ -15,7 +15,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
 
-      - name: Use Node LTS version
+      - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           cache: yarn
@@ -24,8 +24,77 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Check formatting
+        run: yarn lint-staged
+
+  test:
+    # Full test suite. Ava 8 requires Node ^22.20 || ^24.12 || >=26, so we
+    # can only run `yarn test` on those. See the `smoke` job below for
+    # validation on Node 18/20.
+    name: Test (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22, 24]
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
       - name: Run test suite
         run: yarn test
+
+  smoke:
+    # engines.node claims >=18 for consumers. Prove it: on Node 18/20 (where
+    # our dev tooling can't install), just verify the module loads and the
+    # plugin runs end-to-end against a small input via a bare `postcss` install.
+    name: Smoke (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18, 20]
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install postcss only
+        # Deliberately not running `yarn install` — its dev-tooling floor is
+        # higher than the plugin's runtime floor. Install just the runtime dep.
+        run: npm install --no-save --no-package-lock postcss@^8.4.0
+
+      - name: Import and run plugin
+        run: |
+          node --input-type=module -e '
+            import postcss from "postcss";
+            import plugin from "./index.js";
+            const input = ".a { --z: 1; --a: var(--z); color: red; }";
+            const result = await postcss([plugin()]).process(input, { from: "smoke.css" });
+            const warnings = result.warnings();
+            if (warnings.length !== 0) { console.error("unexpected warnings:", warnings); process.exit(1); }
+            if (!result.css.includes("--z: 1;")) { console.error("output missing --z:", result.css); process.exit(1); }
+            if (!result.css.includes("--a: var(--z);")) { console.error("output missing --a:", result.css); process.exit(1); }
+            console.log("smoke ok on node", process.version);
+          '
 
   coverage:
     permissions:
@@ -40,7 +109,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           cache: yarn
-          node-version: 24
+          node-version: 22
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -64,4 +133,4 @@ jobs:
           recreate: true
           path: code-coverage-results.md
       - name: Write to job summary
-        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+        run: cat code-coverage-results.md >> "$GITHUB_STEP_SUMMARY"
