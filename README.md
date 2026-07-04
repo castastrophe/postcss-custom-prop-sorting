@@ -1,7 +1,6 @@
 # postcss-custom-prop-sorting
 
-> Bring together all custom properties at the top of a set of rules and sort them by a provided
-> sorting function (defaults to alphanumeric).
+> Built for design-token stylesheets: dependency-aware sorting for CSS custom properties — including nested `var()` fallback chains — with TypeScript types and Node 18+ / PostCSS 8 support.
 
 ## Installation
 
