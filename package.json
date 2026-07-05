@@ -1,6 +1,6 @@
 {
   "name": "postcss-custom-prop-sorting",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Adds custom properties to the start of a declaration block and sorts them.",
   "license": "Apache-2.0",
   "author": "Cassondra Roberts <castastrophe@users.noreply.github.com> (https://allons-y.llc)",
