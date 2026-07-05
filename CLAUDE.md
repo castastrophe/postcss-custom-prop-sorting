@@ -61,7 +61,7 @@ For any change under `index.js` or `index.d.ts`, run both `yarn test`
 and `yarn lint` locally before reporting the task complete. "Should
 work" is not sufficient — the tests are fast, run them.
 
-## Updating the JSDoc
+## Maintaining types
 
 `index.d.ts` is generated from the JSDoc on `index.js` by `tsc`
 (config in `tsconfig.json`). **Do not hand-edit `index.d.ts`.** If the
