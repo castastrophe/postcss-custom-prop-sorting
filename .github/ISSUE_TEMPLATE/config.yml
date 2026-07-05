@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Questions & discussion
+    url: https://github.com/orgs/Allons-y-Studio/discussions
+    about: Have a question or want to discuss an idea? Start a discussion instead of opening an issue.
+  - name: 🔐 Report a security vulnerability
+    url: https://github.com/Allons-y-Studio/.github/security/policy
+    about: Please report security issues privately — see our security policy.
+  - name: 🆘 Support
+    url: https://github.com/Allons-y-Studio/.github/blob/main/SUPPORT.md
+    about: Need help using one of our projects? Here's how to get support.
