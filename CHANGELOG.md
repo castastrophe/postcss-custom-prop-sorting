@@ -1,6 +1,12 @@
 # postcss-custom-prop-sorting
 
-## 3.0.0
+## 4.0.0
+
+> `3.0.0` was skipped: the previous release pipeline (`semantic-release`) had
+> already published `3.0.0` to npm for the Node 24 requirement bump, so this
+> version — originally cut as `3.0.0` by the migrated `changesets` pipeline —
+> is published as `4.0.0` to avoid the version collision. The changes below
+> are the ones that were on `main` under the `3.0.0` heading.
 
 ### Major Changes
 
