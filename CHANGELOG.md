@@ -2,11 +2,31 @@
 
 ## 4.0.0
 
-> `3.0.0` was skipped: the previous release pipeline (`semantic-release`) had
-> already published `3.0.0` to npm for the Node 24 requirement bump, so this
-> version — originally cut as `3.0.0` by the migrated `changesets` pipeline —
-> is published as `4.0.0` to avoid the version collision. The changes below
-> are the ones that were on `main` under the `3.0.0` heading.
+> **Note on npm's `3.0.0`.** `postcss-custom-prop-sorting@3.0.0` did ship to
+> npm — the previous `semantic-release` pipeline cut it on 2025-11-25 — but
+> what it published to the `3.0.0` slot is not what the modernization work
+> below describes. It packaged the then-current `2.1.0` source tree with the
+> version string rewritten to `3.0.0` at publish time (semantic-release does
+> not commit the bump back to git, which is why `git show v3.0.0:package.json`
+> still says `2.1.0`). Relative to `2.1.0`, npm's `3.0.0` contains:
+>
+> - `engines.node` raised from `>=20` to `>=24` (from [#151](https://github.com/castastrophe/postcss-custom-prop-sorting/pull/151)) — the breaking change that forced the major bump.
+> - `.nvmrc` bumped from `20.*` to `24.*` to match.
+> - `js-yaml` transitive lockfile bump `3.14.1 → 3.14.2`.
+> - Copyright year `2023 → 2025` and a whitespace fix in `index.js`.
+>
+> Plugin behavior, the exported `Options` shape, the module format (CJS
+> `module.exports`), and the `peerDependencies.postcss` range
+> (`^7.0.0 || ^8.0.0`) are all unchanged from `2.1.0`; no TypeScript
+> declarations shipped in that tarball. If you are on `postcss-custom-prop-sorting@3.0.0`
+> today, you effectively have `2.1.0` behavior gated to Node 24.
+>
+> The modernization work described below was intended to land as `3.0.0`
+> via the migrated `changesets` pipeline; because the version slot was
+> already occupied, `changeset publish` no-op'd and the release is being
+> cut as `4.0.0` instead. Consumers upgrading from **any** published
+> version (`1.x`, `2.x`, or `3.0.0`) to `4.0.0` should follow the full
+> "Breaking changes" list.
 
 ### Major Changes
 
