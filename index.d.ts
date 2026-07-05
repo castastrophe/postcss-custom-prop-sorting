@@ -13,7 +13,7 @@ export type Options = {
      *
      * Defaults to a natural (numeric-aware) alphabetical sort by property name.
      */
-    sortOrder?: (a: PropSet, b: PropSet) => number;
+    sortOrder?: ((a: PropSet, b: PropSet) => number) | undefined;
 };
 /** @type {import('postcss').PluginCreator<Options>} */
 declare const plugin: import("postcss").PluginCreator<Options>;

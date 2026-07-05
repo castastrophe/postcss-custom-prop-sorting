@@ -9,7 +9,7 @@
     "moduleResolution": "bundler",
     "target": "es2022",
     "noImplicitAny": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "skipLibCheck": true,
     "resolveJsonModule": true
   },

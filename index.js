@@ -79,8 +79,9 @@ const plugin = ({
         for (const [, depName] of decl.value.matchAll(
           /var\(\s*(--[^\s,)]+)/g,
         )) {
-          if (!dependencies.has(depName)) dependencies.set(depName, new Set());
-          dependencies.get(depName).add(prop);
+          let dependents = dependencies.get(depName);
+          if (!dependents) dependencies.set(depName, (dependents = new Set()));
+          dependents.add(prop);
         }
 
         /**
@@ -117,9 +118,9 @@ const plugin = ({
         if (!propNames.has(dep)) continue;
         for (const dependent of dependents) {
           if (!propNames.has(dependent)) continue;
-          if (!dependenciesOf.has(dependent))
-            dependenciesOf.set(dependent, new Set());
-          dependenciesOf.get(dependent).add(dep);
+          let deps = dependenciesOf.get(dependent);
+          if (!deps) dependenciesOf.set(dependent, (deps = new Set()));
+          deps.add(dep);
         }
       }
 
@@ -137,9 +138,16 @@ const plugin = ({
       const placed = new Set(independents.map(([p]) => p));
 
       while (dependentsPending.length > 0) {
-        const idx = dependentsPending.findIndex(([p]) =>
-          [...dependenciesOf.get(p)].every((d) => placed.has(d)),
-        );
+        const idx = dependentsPending.findIndex(([p]) => {
+          // `p` is only in `dependentsPending` because the partition above
+          // filtered on `dependenciesOf.has(p)`, so the entry is present —
+          // but TS can't carry that narrowing across the callback.
+          const deps =
+            /** @type {Set<import('postcss').Declaration["prop"]>} */ (
+              dependenciesOf.get(p)
+            );
+          return [...deps].every((d) => placed.has(d));
+        });
         if (idx === -1) {
           // Every remaining dependent still has an unresolved dep in this set
           // — that means a cycle. Append the rest in their current sort order.
