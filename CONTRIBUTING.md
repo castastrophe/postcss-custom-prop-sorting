@@ -80,6 +80,19 @@ order rather than looping. Start in `index.js` at the `Rule` visitor.
 7. **Add a changeset** for any user-facing change: `yarn changeset`.
 8. **Open a pull request** against `main` and fill out the PR template.
 
+### Writing a changeset
+
+`yarn changeset` will drop a Markdown file in `.changeset/`. The body
+of that file becomes the CHANGELOG entry that ships to consumers, so
+treat it like release notes:
+
+- Write full sentences with punctuation — not commit-message shorthand
+  and not sentence fragments.
+- Address the reader (the person upgrading), not the reviewer. Lead
+  with the observable behavior change.
+- Use Markdown: inline `code` for symbols and options, links for
+  issues/PRs, and lists when there's more than one item.
+
 ### Adding a test
 
 Tests are AVA-driven and follow a fixture / expected pair pattern:
