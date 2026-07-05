@@ -82,15 +82,14 @@ order rather than looping. Start in `index.js` at the `Rule` visitor.
 
 ### Writing a changeset
 
-`yarn changeset` will drop a Markdown file in `.changeset/`. The body
+`yarn changeset` will add a new markdown file in `.changeset/`. The body
 of that file becomes the CHANGELOG entry that ships to consumers, so
 treat it like release notes:
 
-- Write full sentences with punctuation — not commit-message shorthand
-  and not sentence fragments.
+- Write full sentences with punctuation; no commit-message shorthand or sentence fragments.
 - Address the reader (the person upgrading), not the reviewer. Lead
   with the observable behavior change.
-- Use Markdown: inline `code` for symbols and options, links for
+- Use markdown formatting best practices such as: inline `code` for symbols and options, links for
   issues/PRs, and lists when there's more than one item.
 
 ### Adding a test
@@ -141,19 +140,17 @@ A `BREAKING CHANGE:` footer or a `!` after the type (e.g. `feat!:`) triggers a m
 
 The plugin peers on `postcss ^8.4.0`. Raising that floor — or any change
 to the exported plugin factory signature, the `Options` shape, or the
-default sort order — is a **breaking change** and requires a `major`
-changeset. Adding new options with safe defaults is a `minor`. Bug
+default sort order — is a **breaking change** `major`. Adding new options with safe defaults is a `minor`. Bug
 fixes and internal refactors are `patch`.
 
 ## Release process
 
 Releases are automated via [Changesets](https://github.com/changesets/changesets).
 When a PR that includes a changeset merges to `main`, the release
-workflow either opens/updates a "Version Packages" PR (bundling all
-pending changesets into a version bump + CHANGELOG entry) or, if that
-PR is already the one merging, publishes the new version to npm with
-provenance. Contributors don't cut releases directly — just remember
-step 7 in the workflow above.
+workflow opens/updates a PR (bundling all
+pending changesets into a version bump + CHANGELOG entry). If that
+PR is the one being merged, CI will publish the new version to npm with
+provenance. Contributors don't cut releases directly, those steps are handled by the maintainers.
 
 ## License
 
