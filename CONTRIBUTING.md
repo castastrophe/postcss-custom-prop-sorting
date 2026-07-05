@@ -28,9 +28,12 @@ Before opening a new issue, search existing ones to avoid duplicates.
 
 The whole plugin is a single file, so there isn't much to navigate:
 
-- `index.js` — the plugin implementation.
-- `index.d.ts` — the public TypeScript types. Update these when the
-  plugin's options or return type change.
+- `index.js` — the plugin implementation, and the source of truth
+  for the public TypeScript types (via its JSDoc annotations).
+- `index.d.ts` — the public TypeScript types. **Generated** — don't
+  hand-edit. `tsc` emits this from the JSDoc on `index.js`; see
+  `tsconfig.json`. Update the JSDoc annotations and the pre-commit
+  hook (or `yarn types`) refreshes the file.
 - `fixtures/` — input CSS for tests (one file per case).
 - `expected/` — the expected output for each fixture, matched by filename.
 - `test.js` — the AVA test harness that runs each fixture through the
