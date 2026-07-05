@@ -12,29 +12,35 @@
  */
 
 /**
+ * A single custom-property entry passed to the `sortOrder` comparator:
+ * a tuple of the property name (e.g. `"--foo"`) and its PostCSS `Declaration`.
+ *
  * @typedef {[import('postcss').Declaration["prop"], import('postcss').Declaration]} PropSet
  */
 
 /**
  * @typedef {object} Options
  * @property {(a: PropSet, b: PropSet) => number} [sortOrder]
- **/
+ *   Custom comparator applied to each pair of custom properties.
+ *
+ *   Receives two `PropSet` tuples and returns a negative number if `a` should
+ *   sort before `b`, positive if `a` should sort after `b`, or zero for equal.
+ *
+ *   Defaults to a natural (numeric-aware) alphabetical sort by property name.
+ */
 
 const messages = {
   sortOrderMustBeFunction: () =>
     "The sort order input must be provided as a function. The custom properties will be sorted alphanumerically by default.",
 };
 
-/**
- * @type {import('postcss').PluginCreator<Options>}
- * @param {Options} options
- * @returns {import('postcss').Plugin}
- */
+/** @type {import('postcss').PluginCreator<Options>} */
 const plugin = ({
   /* Defaults to sorting alphabetically. */
   sortOrder,
 } = {}) => {
   // Sort the custom properties alphabetically and then numerically
+  /** @type {(a: PropSet, b: PropSet) => number} */
   const alphaNumericSort = ([a], [b]) => {
     // Sort the values in alphabetical order first and then
     // sort the numbers in numerical order assuming no leading zeros
@@ -44,7 +50,6 @@ const plugin = ({
 
   return {
     postcssPlugin: "postcss-custom-prop-sorting",
-    /** @type {import('postcss').RuleProcessor} */
     Rule(rule, { result }) {
       /** Create a map to store the custom properties. */
       /** @type Map<import('postcss').Declaration["prop"], import('postcss').Declaration> */

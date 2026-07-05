@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": ".",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "es2022",
+    "noImplicitAny": true,
+    "strictNullChecks": false,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["index.js"]
+}
