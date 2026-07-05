@@ -107,7 +107,9 @@ A custom function can be passed to the array sort method. That function will rec
 
 ## Contributing
 
-Contributions are welcome! Please open an [issue](https://github.com/castastrophe/postcss-custom-prop-sorting/issues/new) or submit a pull request.
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow, test recipe, and release process, or open an [issue](https://github.com/castastrophe/postcss-custom-prop-sorting/issues/new) if you're not sure where to start.
+
+> `index.d.ts` is generated from the JSDoc on `index.js` by `tsc` — don't hand-edit it. Update the JSDoc and let `yarn types` (or the pre-commit hook) refresh the types file.
 
 ## License
 
