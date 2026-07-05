@@ -27,7 +27,7 @@ jobs:
       - name: Check formatting
         run: yarn lint-staged
 
-      - name: Check index.d.ts is up to date with index.js JSDoc
+      - name: Validate typing
         run: |
           yarn types
           if ! git diff --exit-code -- index.d.ts; then
