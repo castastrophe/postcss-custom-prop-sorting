@@ -29,3 +29,4 @@ Closes #
 - [ ] I have updated documentation where appropriate (README, `index.d.ts`).
 - [ ] My changes generate no new PostCSS warnings.
 - [ ] If this is a user-facing change, I have added a changeset (`yarn changeset`).
+- [ ] I have read the [Contributing Guide](../CONTRIBUTING.md) and [Code of Conduct](../CODE_OF_CONDUCT.md).
