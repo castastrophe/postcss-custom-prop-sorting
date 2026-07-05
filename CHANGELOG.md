@@ -1,6 +1,6 @@
 # postcss-custom-prop-sorting
 
-## 4.0.0
+## 3.0.0
 
 ### Major Changes
 
@@ -29,9 +29,3 @@
   - **Commitlint / conventional-commit enforcement removed.** With changesets carrying the release-note authorship, commit messages are no longer parsed to derive versions; the pre-commit hook now runs `lint-staged` instead of the full test suite.
   - **CI test matrix reworked.** Full Ava suite runs on Node 22 & 24 (Ava 8's floor). A lightweight smoke job installs only `postcss` and runs the plugin end-to-end on Node 18 & 20 to prove the widened `engines.node` claim. A Prettier check job gates formatting.
   - **README rewritten.** The API example now shows real PostCSS 8 syntax (`postcss([plugin]).process(...)` instead of the fictitious `postcss.process([plugin])`), the Contributing link points at the correct repo, and a new "Dependency handling" section documents the topological reorder semantics and cycle-warning behavior.
-
-## 3.0.0
-
-### Breaking changes
-
-- `engines.node` raised from `>=20` to `>=24` ([#151](https://github.com/castastrophe/postcss-custom-prop-sorting/pull/151)). No plugin behavior, API, or peer-dependency changes relative to `2.1.0`.
