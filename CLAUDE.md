@@ -18,3 +18,78 @@ body ends where the human-authored content ends.
 
 Write the commit or PR body as if a human maintainer authored it — the
 subject/body should describe the change and the reasoning, nothing else.
+
+## Branch naming
+
+Use the same convention `CONTRIBUTING.md` gives humans, not a
+`claude/*` namespace:
+
+- `fix/<short-description>` for bug fixes
+- `feat/<short-description>` for features
+- `docs/<short-description>` for documentation
+- `chore/<short-description>` for tooling / config / dependency work
+
+Branch off the latest `main`. One logical change per branch; do not
+stack unrelated work.
+
+## Pull request bodies
+
+Fill out the sections in `.github/PULL_REQUEST_TEMPLATE.md` — `## What`,
+`## Why`, `## How`, `## Test plan`, and the `## Checklist`. Do not
+strip sections; if one genuinely has nothing to say, write "n/a" so
+the reviewer can see it was considered.
+
+## Changesets
+
+Any user-facing change (behavior, types, options, peer-dep range) needs
+a `yarn changeset`. The changeset body ships to consumers as the
+CHANGELOG entry — it is release notes, not a commit message:
+
+- Full sentences with punctuation, not shorthand.
+- Address the upgrader ("`sortOrder` now receives …"), not the reviewer.
+- Use Markdown: inline `code` for symbols and options, links for
+  issues / PRs, lists for multi-point entries.
+
+Pick the bump level per `CONTRIBUTING.md`'s "Peer dependency and
+versioning policy": breaking API / options / peer-dep floor → `major`,
+new options with safe defaults → `minor`, bug fixes / internal
+refactors → `patch`.
+
+## Verification before "done"
+
+For any change under `index.js` or `index.d.ts`, run both `yarn test`
+and `yarn lint` locally before reporting the task complete. "Should
+work" is not sufficient — the tests are fast, run them.
+
+## Public API stays in sync
+
+`index.js` and `index.d.ts` describe the same surface. If you change
+the plugin factory signature, the `Options` shape, or the return type,
+update `index.d.ts` in the same commit. A PR that changes one without
+the other is incomplete.
+
+## Test pattern
+
+New tests are fixture / expected pairs — see `CONTRIBUTING.md` →
+"Adding a test" for the recipe. Every test must assert **both**:
+
+- `t.is(result.css, readExpected("<name>.css"))`
+- `t.is(result.warnings().length, N)` (with a `t.regex` on the
+  warning text if `N > 0`)
+
+Skipping the warnings assertion lets regressions slip through silently
+and is the most common mistake here.
+
+## Ask before changing scope-sensitive surfaces
+
+Do not modify any of the following without confirming with the user
+first, even if it looks like a small tweak:
+
+- The exported plugin factory signature or the `Options` shape.
+- The default `sortOrder` behavior.
+- `peerDependencies` (currently `postcss ^8.4.0`).
+- `engines.node` in `package.json`.
+- The `.nvmrc` pin.
+
+These are the surfaces that turn "small change" into "breaking release."
+Flag them up front and let the maintainer decide, then implement.
