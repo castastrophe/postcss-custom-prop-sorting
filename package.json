@@ -77,13 +77,5 @@
       "url": "https://www.buymeacoffee.com/castastrophe"
     }
   ],
-  "lint-staged": {
-    "*.js": [
-      "prettier --write"
-    ],
-    "package.json": [
-      "prettier-package-json --write"
-    ]
-  },
   "packageManager": "yarn@4.16.0"
 }
