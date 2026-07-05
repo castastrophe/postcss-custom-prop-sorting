@@ -35,9 +35,9 @@ stack unrelated work.
 ## Pull request bodies
 
 Fill out the sections in `.github/PULL_REQUEST_TEMPLATE.md` — `## What`,
-`## Why`, `## How`, `## Test plan`, and the `## Checklist`. Do not
-strip sections; if one genuinely has nothing to say, write "n/a" so
-the reviewer can see it was considered.
+`## Why`, `## How`, `## Test plan`, and the `## Checklist`. If a
+section genuinely doesn't apply to the change, delete it rather than
+leaving it empty or padding it with "n/a".
 
 ## Changesets
 
