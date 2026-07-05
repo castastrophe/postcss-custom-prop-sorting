@@ -36,9 +36,9 @@ jobs:
 
       - name: Create Release PR or publish to npm
         id: changesets
-        uses: changesets/action@v2
+        uses: changesets/action@v1.9.0
         with:
-          publish-script: yarn release
+          publish: yarn release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
