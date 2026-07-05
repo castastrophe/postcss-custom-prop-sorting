@@ -24,7 +24,45 @@ You don't have to write code to make a difference:
 Please use our [issue templates](https://github.com/castastrophe/postcss-custom-prop-sorting/issues/new/choose).
 Before opening a new issue, search existing ones to avoid duplicates.
 
+## Project layout
+
+The whole plugin is a single file, so there isn't much to navigate:
+
+- `index.js` — the plugin implementation.
+- `index.d.ts` — the public TypeScript types. Update these when the
+  plugin's options or return type change.
+- `fixtures/` — input CSS for tests (one file per case).
+- `expected/` — the expected output for each fixture, matched by filename.
+- `test.js` — the AVA test harness that runs each fixture through the
+  plugin and compares against `expected/`.
+- `.changeset/` — pending changesets waiting to be released.
+
+## How the plugin works
+
+At a high level, for every rule the plugin splits declarations into
+**custom properties** and **everything else**, then splits the custom
+properties again into **independents** (no `var(--x)` references to
+sibling custom properties in the same rule) and **dependents** (they do
+reference a sibling). Independents are sorted with `sortOrder`
+(alphanumeric by default). Dependents are appended after them and
+topologically ordered so each one still follows all of its in-rule
+dependencies. Cycles trigger a PostCSS warning and get flushed in sort
+order rather than looping. Start in `index.js` at the `Rule` visitor.
+
 ## Development workflow
+
+### Prerequisites
+
+- **Node.js** — consumers only need Node `>=18` (see `engines.node`), but
+  the dev tooling floor is higher: AVA 8 requires `^22.20 || ^24.12 || >=26`.
+  The repo pins a compatible version in `.nvmrc` — `nvm use` is the
+  fastest path.
+- **Yarn 4 via Corepack** — this project uses Yarn 4. Run
+  `corepack enable` once so `yarn` resolves to the pinned version in
+  `package.json`. CI uses `yarn install --immutable`; run the same
+  locally if you want lockfile parity.
+
+### Steps
 
 1. **Fork** the repository and clone your fork.
 2. **Install** dependencies with `yarn install`.
@@ -34,11 +72,24 @@ Before opening a new issue, search existing ones to avoid duplicates.
    - `docs/short-description` for documentation
 4. **Make your changes** in small, focused commits.
 5. **Test** your changes locally with `yarn test` and add tests where
-   appropriate. `yarn coverage` produces a coverage report.
+   appropriate (see below). `yarn coverage` produces a coverage report.
 6. **Lint and format** with `yarn lint` (or `yarn format` to auto-fix)
    before committing.
 7. **Add a changeset** for any user-facing change: `yarn changeset`.
 8. **Open a pull request** against `main` and fill out the PR template.
+
+### Adding a test
+
+Tests are AVA-driven and follow a fixture / expected pair pattern:
+
+1. Add the input CSS at `fixtures/<name>.css`.
+2. Add the expected output at `expected/<name>.css` (byte-for-byte —
+   the assertion is `t.is(result.css, expected)`).
+3. Add a `test(...)` block in `test.js` that calls `run("<name>.css")`
+   and asserts on both `result.css` and `result.warnings()`.
+
+If a case is expected to emit a warning, assert `warnings.length === 1`
+and match the warning text with `t.regex`.
 
 ### Commit messages
 
@@ -70,6 +121,24 @@ A `BREAKING CHANGE:` footer or a `!` after the type (e.g. `feat!:`) triggers a m
 - Reference the issue your PR addresses (`Closes #123`).
 - Make sure CI passes and there are no new PostCSS warnings.
 - Be responsive to review feedback — we aim to be too.
+
+## Peer dependency and versioning policy
+
+The plugin peers on `postcss ^8.4.0`. Raising that floor — or any change
+to the exported plugin factory signature, the `Options` shape, or the
+default sort order — is a **breaking change** and requires a `major`
+changeset. Adding new options with safe defaults is a `minor`. Bug
+fixes and internal refactors are `patch`.
+
+## Release process
+
+Releases are automated via [Changesets](https://github.com/changesets/changesets).
+When a PR that includes a changeset merges to `main`, the release
+workflow either opens/updates a "Version Packages" PR (bundling all
+pending changesets into a version bump + CHANGELOG entry) or, if that
+PR is already the one merging, publishes the new version to npm with
+provenance. Contributors don't cut releases directly — just remember
+step 7 in the workflow above.
 
 ## License
 
