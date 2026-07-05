@@ -1,5 +1,5 @@
 <!--
-  Thanks for contributing to Allons-y Studio! 🎉
+  Thanks for contributing to postcss-custom-prop-sorting! 🎉
   Please fill out the sections below. Keep PRs focused — smaller is easier to review.
 -->
 
@@ -19,13 +19,13 @@ Closes #
 
 ## Test plan
 
-<!-- How you verified the change works. Paste relevant test output or describe the manual steps. -->
+<!-- How you verified the change works. Paste `yarn test` output or describe the manual steps. -->
 
 ## Checklist
 
-- [ ] My code follows the project's style and conventions.
+- [ ] My code follows the project's style and conventions (`yarn lint`).
 - [ ] I have performed a self-review of my changes.
-- [ ] I have added or updated tests where appropriate.
-- [ ] I have updated documentation where appropriate.
-- [ ] My changes generate no new warnings or accessibility regressions.
-- [ ] I have read the [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
+- [ ] I have added or updated tests where appropriate (`yarn test`).
+- [ ] I have updated documentation where appropriate (README, `index.d.ts`).
+- [ ] My changes generate no new PostCSS warnings.
+- [ ] If this is a user-facing change, I have added a changeset (`yarn changeset`).

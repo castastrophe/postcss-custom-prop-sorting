@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Before opening a bug report, please search existing issues for this project to avoid duplicates.
+        Before opening a bug report, please search [existing issues](https://github.com/castastrophe/postcss-custom-prop-sorting/issues) to avoid duplicates.
 
   - type: textarea
     id: description
@@ -19,10 +19,17 @@ body:
     id: reproduction
     attributes:
       label: Steps to reproduce
-      description: The exact steps needed to trigger the bug.
+      description: |
+        The exact steps needed to trigger the bug. A minimal input snippet and the
+        plugin options you used are especially helpful.
       placeholder: |
-        1. Run `<command>` in a directory that contains...
-        2. Observe that...
+        1. Input CSS:
+           ```css
+           .foo { --b: 1; --a: var(--b); }
+           ```
+        2. Plugin options: `customPropSorting({ ... })`
+        3. Run: `postcss -u postcss-custom-prop-sorting -o out.css in.css`
+        4. Observe that...
     validations:
       required: true
 
@@ -42,13 +49,30 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: postcss-version
+    attributes:
+      label: PostCSS version
+      description: The version of `postcss` your project resolves (e.g. `8.5.6`). Check with `npm ls postcss` or `yarn why postcss`.
+      placeholder: 8.x.x
+    validations:
+      required: true
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: postcss-custom-prop-sorting version
+      description: The version of this plugin you're on.
+      placeholder: 2.x.x
+    validations:
+      required: true
+
   - type: textarea
     id: environment
     attributes:
       label: Environment
       description: Fill in the relevant details.
       value: |
-        - Affected project version:
         - Node.js version:
         - Package manager + version:
         - OS:
