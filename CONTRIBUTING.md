@@ -53,10 +53,12 @@ order rather than looping. Start in `index.js` at the `Rule` visitor.
 
 ### Prerequisites
 
-- **Node.js** — consumers only need Node `>=18` (see `engines.node`), but
-  the dev tooling floor is higher: AVA 8 requires `^22.20 || ^24.12 || >=26`.
-  The repo pins a compatible version in `.nvmrc` — `nvm use` is the
-  fastest path.
+- **Node.js** — this project uses [nvm](https://github.com/nvm-sh/nvm)
+  for Node version management. Run `nvm use` in the repo root to pick
+  up the version pinned in `.nvmrc` (install it with `nvm install`
+  first if you don't have it). Consumers only need Node `>=18` (see
+  `engines.node`), but the dev-tooling floor is higher — AVA 8
+  requires `^22.20 || ^24.12 || >=26` — and `.nvmrc` reflects that.
 - **Yarn 4 via Corepack** — this project uses Yarn 4. Run
   `corepack enable` once so `yarn` resolves to the pinned version in
   `package.json`. CI uses `yarn install --immutable`; run the same
