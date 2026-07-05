@@ -61,12 +61,17 @@ For any change under `index.js` or `index.d.ts`, run both `yarn test`
 and `yarn lint` locally before reporting the task complete. "Should
 work" is not sufficient — the tests are fast, run them.
 
-## Public API stays in sync
+## Maintaining types
 
-`index.js` and `index.d.ts` describe the same surface. If you change
-the plugin factory signature, the `Options` shape, or the return type,
-update `index.d.ts` in the same commit. A PR that changes one without
-the other is incomplete.
+`index.d.ts` is generated from the JSDoc on `index.js` by `tsc`
+(config in `tsconfig.json`). **Do not hand-edit `index.d.ts`.** If the
+plugin factory signature, the `Options` shape, or the return type
+changes, update the JSDoc annotations on `index.js` — the pre-commit
+hook runs `yarn types` and re-stages the refreshed `index.d.ts`, and
+CI's lint job fails when the committed file drifts from what the
+JSDoc emits. If the hook was bypassed with `--no-verify`, run
+`yarn types` manually and commit the refreshed file alongside the
+JSDoc change.
 
 ## Test pattern
 

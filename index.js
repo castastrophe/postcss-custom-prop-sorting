@@ -12,29 +12,35 @@
  */
 
 /**
+ * A single custom-property entry passed to the `sortOrder` comparator:
+ * a tuple of the property name (e.g. `"--foo"`) and its PostCSS `Declaration`.
+ *
  * @typedef {[import('postcss').Declaration["prop"], import('postcss').Declaration]} PropSet
  */
 
 /**
  * @typedef {object} Options
  * @property {(a: PropSet, b: PropSet) => number} [sortOrder]
- **/
+ *   Custom comparator applied to each pair of custom properties.
+ *
+ *   Receives two `PropSet` tuples and returns a negative number if `a` should
+ *   sort before `b`, positive if `a` should sort after `b`, or zero for equal.
+ *
+ *   Defaults to a natural (numeric-aware) alphabetical sort by property name.
+ */
 
 const messages = {
   sortOrderMustBeFunction: () =>
     "The sort order input must be provided as a function. The custom properties will be sorted alphanumerically by default.",
 };
 
-/**
- * @type {import('postcss').PluginCreator<Options>}
- * @param {Options} options
- * @returns {import('postcss').Plugin}
- */
+/** @type {import('postcss').PluginCreator<Options>} */
 const plugin = ({
   /* Defaults to sorting alphabetically. */
   sortOrder,
 } = {}) => {
   // Sort the custom properties alphabetically and then numerically
+  /** @type {(a: PropSet, b: PropSet) => number} */
   const alphaNumericSort = ([a], [b]) => {
     // Sort the values in alphabetical order first and then
     // sort the numbers in numerical order assuming no leading zeros
@@ -44,7 +50,6 @@ const plugin = ({
 
   return {
     postcssPlugin: "postcss-custom-prop-sorting",
-    /** @type {import('postcss').RuleProcessor} */
     Rule(rule, { result }) {
       /** Create a map to store the custom properties. */
       /** @type Map<import('postcss').Declaration["prop"], import('postcss').Declaration> */
@@ -74,8 +79,9 @@ const plugin = ({
         for (const [, depName] of decl.value.matchAll(
           /var\(\s*(--[^\s,)]+)/g,
         )) {
-          if (!dependencies.has(depName)) dependencies.set(depName, new Set());
-          dependencies.get(depName).add(prop);
+          let dependents = dependencies.get(depName);
+          if (!dependents) dependencies.set(depName, (dependents = new Set()));
+          dependents.add(prop);
         }
 
         /**
@@ -112,9 +118,9 @@ const plugin = ({
         if (!propNames.has(dep)) continue;
         for (const dependent of dependents) {
           if (!propNames.has(dependent)) continue;
-          if (!dependenciesOf.has(dependent))
-            dependenciesOf.set(dependent, new Set());
-          dependenciesOf.get(dependent).add(dep);
+          let deps = dependenciesOf.get(dependent);
+          if (!deps) dependenciesOf.set(dependent, (deps = new Set()));
+          deps.add(dep);
         }
       }
 
@@ -132,9 +138,16 @@ const plugin = ({
       const placed = new Set(independents.map(([p]) => p));
 
       while (dependentsPending.length > 0) {
-        const idx = dependentsPending.findIndex(([p]) =>
-          [...dependenciesOf.get(p)].every((d) => placed.has(d)),
-        );
+        const idx = dependentsPending.findIndex(([p]) => {
+          // `p` is only in `dependentsPending` because the partition above
+          // filtered on `dependenciesOf.has(p)`, so the entry is present —
+          // but TS can't carry that narrowing across the callback.
+          const deps =
+            /** @type {Set<import('postcss').Declaration["prop"]>} */ (
+              dependenciesOf.get(p)
+            );
+          return [...deps].every((d) => placed.has(d));
+        });
         if (idx === -1) {
           // Every remaining dependent still has an unresolved dep in this set
           // — that means a cycle. Append the rest in their current sort order.

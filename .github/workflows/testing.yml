@@ -27,6 +27,14 @@ jobs:
       - name: Check formatting
         run: yarn lint-staged
 
+      - name: Validate typing
+        run: |
+          yarn types
+          if ! git diff --exit-code -- index.d.ts; then
+            echo "::error::index.d.ts is stale — run 'yarn types' and commit the result."
+            exit 1
+          fi
+
   test:
     # Full test suite. Ava 8 requires Node ^22.20 || ^24.12 || >=26, so we
     # can only run `yarn test` on those. See the `smoke` job below for
