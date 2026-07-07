@@ -111,7 +111,7 @@ Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the wor
 
 ## License
 
-This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details. This means you can use this however you like as long as you provide attribution back to this one. It's nice to share but it's also nice to get credit for your work. 😉
+This project is licensed under the Mozilla Public License 2.0 - see the [LICENSE](LICENSE) file for details. You can use this however you like; if you modify the MPL-licensed files themselves, those changes should be shared back under the same license. It's nice to share but it's also nice to get credit for your work. 😉
 
 ## Funding ☕️
 

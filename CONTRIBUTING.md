@@ -157,7 +157,7 @@ provenance. Contributors don't cut releases directly, those steps are handled by
 
 ## License
 
-Contributions are accepted under this project's [Apache 2.0 license](LICENSE).
+Contributions are accepted under this project's [Mozilla Public License 2.0](LICENSE).
 By submitting a contribution, you agree that it may be distributed under those
 terms.
 
