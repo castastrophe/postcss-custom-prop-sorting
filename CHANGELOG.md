@@ -1,5 +1,17 @@
 # postcss-custom-prop-sorting
 
+## 4.1.0
+
+### Minor Changes
+
+- [#216](https://github.com/castastrophe/postcss-custom-prop-sorting/pull/216) [`c73b0a0`](https://github.com/castastrophe/postcss-custom-prop-sorting/commit/c73b0a0ca22f82bf80c3b62a3b477d9fa0e9873b) - Relicensed from Apache-2.0 to the Mozilla Public License 2.0 (MPL-2.0).
+  The `license` field in `package.json`, the `LICENSE` file, and the source
+  file headers have all been updated. MPL-2.0 remains permissive for use and
+  redistribution; the practical difference is that modifications to the
+  MPL-licensed source files themselves must be made available under the same
+  license. If your usage relied on Apache-2.0 terms specifically, review the
+  MPL-2.0 text before upgrading.
+
 ## 4.0.1
 
 ### Patch Changes
