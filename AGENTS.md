@@ -4,7 +4,7 @@ A PostCSS plugin that hoists custom properties to the top of a declaration block
 sorts them dependency-aware, so a property that references another comes after it.
 The whole plugin is `index.js`; `index.d.ts` is generated from its JSDoc.
 
-ESM only, Node >= 18, Yarn 4. `postcss` is a peer dependency: never move it to
+ESM only, Node >= 18, Yarn 4. `postcss` is a peer dependency; never move it to
 `dependencies`.
 
 ## Commands
@@ -30,11 +30,11 @@ the JSDoc change.
 
 ## Test pattern
 
-Tests are fixture / expected pairs: `CONTRIBUTING.md` → "Adding a test" has the
+Tests are fixture / expected pairs. `CONTRIBUTING.md` → "Adding a test" has the
 recipe. Every test asserts **both**:
 
 - `t.is(result.css, readExpected("<name>.css"))`
-- `t.is(result.warnings().length, N)`: with a `t.regex` on the warning text when
+- `t.is(result.warnings().length, N)`, with a `t.regex` on the warning text when
   `N > 0`
 
 Skipping the warnings assertion lets regressions through silently. It is the most
@@ -54,7 +54,7 @@ decide before implementing, even when the edit looks trivial:
 ## Contributing flow
 
 `CONTRIBUTING.md` is the source of truth for branch naming, the changeset bump
-policy, and the peer-dependency versioning rules: follow it rather than a separate
+policy, and the peer-dependency versioning rules. Follow it rather than a separate
 set of rules here. Two things worth restating:
 
 - Fill in the sections of `.github/PULL_REQUEST_TEMPLATE.md`. Delete a section that
